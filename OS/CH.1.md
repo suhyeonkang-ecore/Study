@@ -29,5 +29,40 @@
     [root@client03 c]# yum localinstall createrepo_c-0.17.7-6.el8.x86_64.rpm
     ```
 
+<br>
 
+## [217p] 하드 링크와 심볼릭 링크 생성하기
+```
+# cd
+~# mkdir linktest && cd $_
+
+[root@client02 linktest]# vi basefile
+[root@client02 linktest]# ln basefile hardlink
+[root@client02 linktest]# ln -s basefile softlink
+
+[root@client02 linktest]# cat basefile
+   original file for file link test
+[root@client02 linktest]# cat hardlink
+   original file for file link test
+[root@client02 linktest]# cat softlink
+   original file for file link test
+```
+
+```
+[root@client02 linktest]# ls -il
+total 8
+1448904 -rw-r--r-- 2 root root 33 Apr 10 13:02 basefile
+1448904 -rw-r--r-- 2 root root 33 Apr 10 13:02 hardlink
+1448903 lrwxrwxrwx 1 root root  8 Apr 10 13:03 softlink -> basefile
+
+// basefile과 hardlink의 inode 번호가 같음
+```
+
+- mv로 원본 파일 이동시킨 후 상태
+
+   ![Image](https://github.com/user-attachments/assets/9984066f-b33c-4c0a-9593-5e82710c7b11)
+
+---
+
+## [245p] yum으로 X 윈도 설치해보기
 
