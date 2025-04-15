@@ -135,7 +135,26 @@ total 8
   - /etc/cron.weekly      매주
   - /etc/cron.monthly     매달
 
+> 실습
+   > 매월 15일 새벽 3시 1분에 /home 디렉터리와 그 하위 디렉터리를 /backup 디렉터리에 백업하도록 예약 작업 설정
 
-    
+0. `crond` 상태 확인
+   ![Image](https://github.com/user-attachments/assets/a99a865d-3f05-46de-81f2-ac10456e5e60)
+   
+1. `/etc/crontab` 파일 수정
+   ![Image](https://github.com/user-attachments/assets/fc4d9658-d23a-4a16-a1aa-19053cc9bc1b)
 
+2. `/etc/cron.monthly` 파일 수정
+   ![Image](https://github.com/user-attachments/assets/506795cc-3c93-4cad-977c-8b4268fa0879)
+   
+3. `/backup` 디렉터리 생성
+   ```
+   mkdir /backup
+   ```
+4. `crond` 서비스 재시작
+   ```
+   systemctl restart crond
+   ```
+5. 날짜 변경 후 테스트
+   ![Image](https://github.com/user-attachments/assets/317361ce-2d8e-42b5-a532-80e912f4c2a5)
 
