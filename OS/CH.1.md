@@ -195,5 +195,11 @@ total 8
               - SELINUX가 활성화될 경우, 기본 `targeted` 정책을 사용하게 설정돼 있음.
          - `minimum` : `targeted`보다 더 적은 범위 보호
          - `mls` : 다단계 보안(Multi-Level Security). 고보안 환경에 사용
-           
+
+---
+
+
+
+
+
 
