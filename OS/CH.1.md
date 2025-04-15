@@ -249,9 +249,25 @@ total 8
     
 4. 재부팅 후 로그인에 시도하면 성공
 
+<br>
+
 ---
 
 ## [288p] GRUB 부트로더
+```
+├── grub2
+│   ├── device.map
+│   ├── fonts
+│   │   └── unicode.pf2
+│   ├── grub.cfg            // GRUB의 핵심 설정 파일
+│   ├── grubenv             // GRUB 환경 변수 저장 파일
+│   └── i386-pc             // GRUB2 모듈(.mod 파일) 저장 디렉터리
+│       ├── acpi.mod
+│       ├── adler32.mod
+│       ├── ...
+
+```
+
 - `GRUB 부트로더`란 Rocky linux를 부팅할 때 처음 나오는 선택 화면을 말함
   
 - GRUB 2의 설정파일은 `/boot/grub2/grub.cfg`이며, 그 링크 파일은 `/etc/grub2.cfg`다.
@@ -264,5 +280,36 @@ total 8
 | 행 | 내용 |
 |---|----------|
 |1|GRUB_TIMEOUT=5|
+|2|GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g'/etc/system-release)"|
+|3|GRUB_DEFAULT=saved|
+|4|GRUB_DISABLE_SUBMENU=true|
+|5|GRUB_TERMINAL_OUTPUT="console"|
+|6|GRUB_CMDLINE_LINUX="resume=UUID=22f95bfe-c61f-45b7-a86f-e78606b368e8 rhgb quiet"|
+|7|GRUB_DISABLE_RECOVERY="true"|
+|8|GRUB_ENABLE_BLSCFG=true|
 
+- 1행 : GRUB 부트로더 나온 후 자동 부팅되는 시간 지정
+  
+- 2행 : 초기 부팅 화면의 각 엔트리 앞에 붙을 배포판 이름 추출
+     - 위의 경우, /etc/system-release 파일에서 `Rocky Linux`라는 글자를 추출
+       
+- 3행 : 기본 선택 엔트리 지정.
+     - `saved` : 이전에 선택한 엔트리가 기본으로 계속 선택되도록 한다는 뜻
+     - `0`으로 설정하면 첫 번째 엔트리가 선택됨
+       
+- 4행 : 서브 메뉴 사용 여부 결정
+     - `true`로 설정하면 서브 메뉴를 사용할 수 없음. 변경할 필요 x
+     - 서브메뉴??????
+- 5행 : GRUB 부트로더가 출력될 장치 지정
+     - console로 설정하면 모니터로 설정됨. 그 외 serial, gfxterm (그래픽 모드 출력) 등으로 설정 가능 
+
+- 6행 : 부팅 시 커널에 전달할 파라미터 지정 설정
+     - 응급 복구 모드 접속 위해 이 행 가장 뒤에 `init=/bin/bash`를 붙여서 부팅했었음!
+
+- 7행 : 엔트리에 복구 관련 내용 표시 여부 결정
+     - `true`로 설정하면 메뉴 엔트리에서 복구와 관련된 내용 비활성화함. 변경할 필요 x
+
+- 8행 : 생략
+
+<br>
 
