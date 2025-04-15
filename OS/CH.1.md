@@ -233,9 +233,36 @@ total 8
       - 현재 '/' 파티션(루트파티션)이 읽기 전용모드로 마운트되어 있기 때문!
 
 ### 3️⃣ Step 3
+- 마운트된 파티션을 읽기/쓰기 모드로 변경한다.
 
+1. `mount` 명령을 입력한 후 가장 아래쪽을 보면, '/' 파티션이 읽기 전용(ro) 모드로 마운트되어 있는 사실 확인 가능
+   
+     ![Image](https://github.com/user-attachments/assets/997ec9e9-149b-4c5a-b29a-34682c384400)
+   
+2. `mount -o remount,rw /` 명령을 입력해 rw 모드로 다시 마운트 + 상태 확인
 
+      ![Image](https://github.com/user-attachments/assets/2d103e03-b4ac-44b1-bfc9-c83aacba2934)
 
+3. 다시 `passwd` 명령을 입력해 비밀번호 변경 시도 --> 성공!
 
-
+      ![Image](https://github.com/user-attachments/assets/268cead4-56a6-4f70-8b75-bec1ff2a8fbc)
     
+4. 재부팅 후 로그인에 시도하면 성공
+
+---
+
+## [288p] GRUB 부트로더
+- `GRUB 부트로더`란 Rocky linux를 부팅할 때 처음 나오는 선택 화면을 말함
+  
+- GRUB 2의 설정파일은 `/boot/grub2/grub.cfg`이며, 그 링크 파일은 `/etc/grub2.cfg`다.
+  - `grub.cfg` : 일반 사용자에게는 읽기 전용으로 권한 설정되어 있음. root는 r/w 가능
+  - 하지만 GRUB 2의 설정을 변경하고자 이 파일을 직접 편집해서는 안 됨!
+  - 설정 내용을 변경하려면 `/etc/default/grub` 파일과 `/etc/grub.d` 디렉터리의 파일을 수정한 후 `grub2-mkconfig`명령을 실행해 설정을 적용해야 함
+
+<br>
+
+| 행 | 내용 |
+|---|----------|
+|1|GRUB_TIMEOUT=5|
+
+
