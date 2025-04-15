@@ -321,6 +321,7 @@ total 8
 > 부트로더의 일부 설정을 변경하고 부트로더에 비밀번호 설정해보기
 - 부팅 시 GRUB 부트로더가 나타나도록 운영체제 선택 대기 시간을 20초로 설정한다.
   -  `vi /etc/default/grub`
+  -  여기서 `-o` 옵션은 output을 의미. 출력 위치 지정!
     
   ![Image](https://github.com/user-attachments/assets/823e1dc5-24eb-4506-8794-6c20e11be954)
 
@@ -336,7 +337,6 @@ total 8
 > 누구나 GRUB 부트로더를 편집할 수 있었던 문제점을 해결하기 위해, GRUB 부트로더에 비밀번호를 설정한다.
 
 1. `/etc/grub.d/00_geader` 파일을 열고 가장 아래쪽에 다음 4개의 행을 추가하고 저장
-      - 여기서 `-o` 옵션은 output을 의미. 출력 위치 지정!
 
    ![image](https://github.com/user-attachments/assets/fbbffe25-9aad-4a23-8bdd-8970879f372e)
 
