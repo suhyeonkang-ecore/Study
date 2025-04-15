@@ -166,5 +166,34 @@ total 8
 
 ---
 
+## [274p] SELinux
+- 보안에 취약한 리눅스 보호 위해 탄생
+- 시스템에서 보안에 영향을 미치는 서비스, 권한 등 제어 가능
+- 침입자가 네트워크의 어떤 경로로 시스템 침입에 성공하더라고 침입한 경로의 애플리케이션 사용 이상의 권한을 얻지는 못함
+  - e.g. FTP 서버의 경로로 침입한 경우, FTP와 관련된 디렉터리나 파일 외 다른 서버에는 접근 불가
 
+<br>
+
+#### 🌟selinux 활성화 여부 확인
+
+   ![Image](https://github.com/user-attachments/assets/5ecf603b-5db6-4f74-be78-c5e34b5e1ff7)
+
+<br>
+
+#### 🌟`/etc/selinux/config` 파일 확인
+   1. `SELINUX=` 항목
+      ![Image](https://github.com/user-attachments/assets/888b32ce-7140-4c58-9498-5ca79002553e)
+
+         - `enforcing` : SELinux 정책 적용
+         - `permissive` : 정책 위반 시 경고만 출력 (실제 차단은 하지 않음)
+         - `disabled` : SELinux 기능이 완전히 꺼짐
+
+   2. `SELINUXTYPE` 항목
+      ![Image](https://github.com/user-attachments/assets/0835a907-5f2f-4575-b716-fb775d01c526)
+
+         - `targeted` : 기본값, 주요 시스템 데몬만 보호
+              - SELINUX가 활성화될 경우, 기본 `targeted` 정책을 사용하게 설정돼 있음.
+         - `minimum` : `targeted`보다 더 적은 범위 보호
+         - `mls` : 다단계 보안(Multi-Level Security). 고보안 환경에 사용
+           
 
