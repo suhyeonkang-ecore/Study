@@ -64,5 +64,48 @@ total 8
 
 ---
 
-## [245p] yum으로 X 윈도 설치해보기
+## [245p] 파일 압축과 묶기
+### tar
+> 동작
+   ```
+   c : 새로운 묶음 파일 생성
+   x : 묶음 파일을 품
+   t : 묶음 파일 해제 전에 묶인 경로 표시
+   C : 지정된 디렉터리에 묶음 파일을 품. 지정하지 않으면 묶을 때와 동일한 디렉터리에 해제
+   ```
+
+> 옵션
+   ```
+   f(필수) : 묶음 파일의 이름 지정
+   v (visual) : 파일이 묶이거나 풀리는 과정 표시 (생략가능)
+   J : tar + xz
+   j : tar + bz2
+   z : tar + gzip
+   ```
+
+## [248p] 파일 위치 검색
+1. find 경로옵션조건 action
+   - 옵션
+     ```
+     -name
+     -user (소유자)
+     -newer(전,후)
+     -perm(허가권)
+     -size(크기)
+     ```
+
+   - action
+     ```
+     -print (기본값)
+     -exec (외부 명령 실행)
+     ```
+
+> 기본 사용 예시
+   ```
+   # find /etc -name "*.conf
+   # find /home -user rocky
+   # find ~ -perm 644
+   # find /usr/bin -size +10k -size -100k
+   ```
+
 
