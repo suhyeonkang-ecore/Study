@@ -336,16 +336,17 @@ total 8
 > 누구나 GRUB 부트로더를 편집할 수 있었던 문제점을 해결하기 위해, GRUB 부트로더에 비밀번호를 설정한다.
 
 1. `/etc/grub.d/00_geader` 파일을 열고 가장 아래쪽에 다음 4개의 행을 추가하고 저장
+      - 여기서 `-o` 옵션은 output을 의미. 출력 위치 지정!
 
    ![image](https://github.com/user-attachments/assets/fbbffe25-9aad-4a23-8bdd-8970879f372e)
 
 
-2. 변경한 내용 적용
+3. 변경한 내용 적용
    ```
    grub2-mkconfig -o /boot/grub2/grub.cfg
    ```
 
-3. `reboot` 명령을 통해 재부팅.
+4. `reboot` 명령을 통해 재부팅.
    - 이제부터는 GRUB 부트로더를 사용하려면 앞에서 설정한 사용자 이름과 비밀번호 입력해야 함
    - 제대로 작동하는지 확인하기 위해 부팅 시 `E`를 눌러 편집화면에 진입해볼 것
 
