@@ -325,6 +325,7 @@ total 8
   ![Image](https://github.com/user-attachments/assets/823e1dc5-24eb-4506-8794-6c20e11be954)
 
   -  여기서 `-o` 옵션은 output을 의미. 출력 위치 지정!
+  -  == grub2-mkconfig가 생성한 부팅 설정 내용을 /boot/grub2/grub.cfg 파일에 저장해라
     
   ![Image](https://github.com/user-attachments/assets/0b134bb2-a59a-4255-85ff-0032a4d80aaf)
 
