@@ -182,6 +182,7 @@ total 8
 
 #### 🌟`/etc/selinux/config` 파일 확인
    1. `SELINUX=` 항목
+    
       ![Image](https://github.com/user-attachments/assets/888b32ce-7140-4c58-9498-5ca79002553e)
 
          - `enforcing` : SELinux 정책 적용
@@ -189,7 +190,8 @@ total 8
          - `disabled` : SELinux 기능이 완전히 꺼짐
 
    2. `SELINUXTYPE` 항목
-      ![Image](https://github.com/user-attachments/assets/0835a907-5f2f-4575-b716-fb775d01c526)
+
+       ![Image](https://github.com/user-attachments/assets/0835a907-5f2f-4575-b716-fb775d01c526)
 
          - `targeted` : 기본값, 주요 시스템 데몬만 보호
               - SELINUX가 활성화될 경우, 기본 `targeted` 정책을 사용하게 설정돼 있음.
