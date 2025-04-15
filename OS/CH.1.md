@@ -206,8 +206,36 @@ total 8
    
 ---
 
+## [285p] root password 복구
+
+### 1️⃣ Step 1
+1. 사용자 모드(응급 복구 모드) 접속
+   - 부팅 후 GRUB 부트 로더가 나타났을 때, 첫 번째 항목이 선택된 상태에서 `E` 클릭 (Edit)
+     
+      ![Image](https://github.com/user-attachments/assets/483c4bf8-6335-42cd-bd96-efe877175db0)
+
+2. 노란색 부분 수정하기
+     - `rhgb quiet` ➡️ `init=/bin/bash`
+       
+         ![Image](https://github.com/user-attachments/assets/f576fea8-fcef-4b5d-af3b-9d3ce103a650)
+
+3. `Ctrl`+`X` 눌러서 부팅
+
+### 2️⃣ Step 2
+- 단일 사용자 모드에서 root의 비밀번호를 변경한다.
+1. 별도의 로그인 절차 없이 부팅이 된다.
+
+    ![Image](https://github.com/user-attachments/assets/6d4bacbc-9ca5-4599-a688-7076b185d0fa)
+      - `whoami` 명령을 입력해 현재 로그인된 사용자가 root인지 확인
+
+2. `passwd` 명령을 통해 패스워드 변경
+      - 변경할 수 없다는 오류 메시지가 출력됨.
+      - 현재 '/' 파티션(루트파티션)이 읽기 전용모드로 마운트되어 있기 때문!
+
+### 3️⃣ Step 3
 
 
 
 
 
+    
