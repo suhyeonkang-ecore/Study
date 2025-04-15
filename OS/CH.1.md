@@ -108,4 +108,34 @@ total 8
    # find /usr/bin -size +10k -size -100k
    ```
 
+> 고급 사용 예시
+   ```
+   # find ~ `size 0k exec ls -l { } \;         // 현재 사용자의 홈 디렉터리 하위에서 크기가 0인 파일 목록 상세히 출력
+   # find /home -name "*.swp" -exec rm { } \;  // /home 디렉터리 하위에서 확장명이 *.swp인 파일 삭제
+   ```
+
+2. which
+   - PATH에 설정된 디렉터리만 검색. 절대경로를 포함한 위치 검색
+
+3. whereis
+   - 실행파일 및 소스, man 페이지 파일까지 검색
+
+---
+
+## [252p] CRON과 AT 
+### 1. CRON
+- `/etc/crontab`
+  ```
+  분 시 일 월 요일 사용자 실행명령
+  ```
+
+- `/etc/crontab` 디렉터리 구조
+  - /etc/cron.hourly      매시
+  - /etc/cron.daily       매일
+  - /etc/cron.weekly      매주
+  - /etc/cron.monthly     매달
+
+
+    
+
 
