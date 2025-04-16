@@ -11,6 +11,39 @@
 
 <br>
 
+# ⚒️ 로컬 레포 구성
+1. iso 파일 삽입
+   ```
+   mount -o loop /dev/sr0 /mnt
+   ```
+
+2. 디렉터리 생성 후 파일 복사
+   ```
+   mkdir /localrepo
+   cd /mnt
+   cp -ar AppStream/ BaseOS/ /localrepo/
+   ```
+
+3. `createrepo` 설치를 위해 의존성 파일 먼저 설치 
+
+   ![image](https://github.com/user-attachments/assets/6b0db2ce-dd50-4725-bfd2-7ed680c388e1)
+
+   - `drpm` 설치
+     
+      ![image](https://github.com/user-attachments/assets/1519785b-3538-4868-b188-2ee65918c2de)
+
+   - `libcreaterepo`, `createrepo` 설치
+
+       ![image](https://github.com/user-attachments/assets/0fde5829-044e-4723-9ccd-5e9de0b32a28)
+
+
+마운트해제
+
+
+
+
+
+
 ## [217p] 하드 링크와 심볼릭 링크 생성하기
 ```
 # cd
@@ -415,10 +448,14 @@ total 8
 
 - 모듈을 자세히 보고 싶다면 `modinfo 모듈명` 
      
-#### 💡실습
+### 💡실습
 > Rocky linux 8.9의 커널을 최신 버전으로 업그레이드하자.
 
+<br>
+
 #### 1️⃣ 설치된 커널 버전과 현재 최신 커널 버전 확인
+> <https://servermon.tistory.com/702> 링크 참고
+
 1. OS 버전 및 설치된 커널 버전 확인
    
    ![image](https://github.com/user-attachments/assets/5264a2ce-f693-463a-ae34-9c62b8db479e)
