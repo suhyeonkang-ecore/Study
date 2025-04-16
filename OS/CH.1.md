@@ -37,8 +37,19 @@
       ![image](https://github.com/user-attachments/assets/873070d4-8303-4b37-bf4b-66741e20b095)
 
 
-마운트해제
+4. 마운트 해제
+   ```
+   umount /dev/sr0
+   ```
 
+
+5. `/etc/yum.repos.d/Rocky-Media.repo` 파일 수정
+
+   ![image](https://github.com/user-attachments/assets/7a01a3c1-66d5-4a95-9501-aebb08f01b81)
+
+6. 설치 테스트
+
+   ![image](https://github.com/user-attachments/assets/df2688c4-61dd-4c09-93eb-46febbff05d6)
 
 
 ## [217p] 하드 링크와 심볼릭 링크 생성하기
