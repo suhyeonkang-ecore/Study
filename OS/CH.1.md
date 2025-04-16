@@ -24,35 +24,23 @@
    cp -ar AppStream/ BaseOS/ /localrepo/
    ```
 
-3. `createrepo` 설치 (의존성 파일 먼저 설치)
-
-   ![image](https://github.com/user-attachments/assets/6b0db2ce-dd50-4725-bfd2-7ed680c388e1)
-
-   - `drpm` 설치
-     
-      ![image](https://github.com/user-attachments/assets/1519785b-3538-4868-b188-2ee65918c2de)
-
-   - `libcreaterepo`, `createrepo` 설치
-
-      ![image](https://github.com/user-attachments/assets/873070d4-8303-4b37-bf4b-66741e20b095)
-
-
-4. 마운트 해제
+3. 마운트 해제
    ```
    umount /mnt
    ```
 
 
-5. `/etc/yum.repos.d/local.repo` 파일 생성
+4. `/etc/yum.repos.d/local.repo` 파일 생성
 
    ![image](https://github.com/user-attachments/assets/531c70f5-a69e-45be-9203-7a13efa11341)
 
 
 
-6. 설치 테스트
+5. 설치 테스트
 
    ![image](https://github.com/user-attachments/assets/df2688c4-61dd-4c09-93eb-46febbff05d6)
 
+<br>
 
 ## [217p] 하드 링크와 심볼릭 링크 생성하기
 ```
@@ -464,9 +452,8 @@ total 8
 <br>
 
 #### 1️⃣ 설치된 커널 버전과 현재 최신 커널 버전 확인
-> <https://servermon.tistory.com/702> 링크 참고
 
-1. 커널 버전 확인 및 업데이트 버전 확인
+- 커널 버전 확인 및 업데이트 버전 확인
 
    - 커널/OS 버전 확인
    
@@ -483,15 +470,109 @@ total 8
             
        ![image](https://github.com/user-attachments/assets/42427615-21c7-4564-b763-49e3cee97c01)
 
+<br>
 
-   2. 커널 업데이트
-      > OS 버전 업데이트는 다른 소프트웨어와의 호환성에 문제가 있을 수 있어 커널 업데이트만 진행
+#### 2️⃣ 필요 패키지 설치
+> OS 버전 업데이트는 다른 소프트웨어와의 호환성에 문제가 있을 수 있어 커널 업데이트만 진행
+
+<https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/Packages/k/>
+
+- `client02`는 폐쇄망이기 때문에 인터넷이 가능한 `client01`에서 scp를 통해 전송할 예정
+
+   - `client01`에 패키지 설치
+      ```
+      wget https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/Packages/k/kernel-core-4.18.0-553.el8_10.x86_64.rpm
+      wget https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/Packages/k/kernel-modules-4.18.0-553.el8_10.x86_64.rpm
+      wget https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/Packages/k/kernel-modules-extra-4.18.0-553.el8_10.x86_64.rpm
 
       ```
-      dnf install kernel
-      ```
+         
+     ![image](https://github.com/user-attachments/assets/712a8dec-147c-450c-8252-996236af5072)
 
-      
+   - `client02`에 scp를 통해 전송
+      ```
+      scp -r kernel-core-4.18.0-553.el8_10.x86_64.rpm 192.168.56.6:/localrepo//AppStream/Packages/k                         
+      scp -r kernel-modules-extra-4.18.0-553.el8_10.x86_64.rpm  192.168.56.6:/localrepo/AppStream/Packages/k
+      scp -r kernel-modules-4.18.0-553.el8_10.x86_64.rpm 192.168.56.6:/localrepo/AppStream/Packages/k
+      ```
+<br>
+
+- `client02`에서 파일 확인
+     ```
+     ls | grep 553
+     ```
+
+  ![image](https://github.com/user-attachments/assets/0fd7fb22-6934-498f-8944-6a56fe7472be)
+
+- kernel 설치
+   ```
+   yum localinstall ./kernel-core-4.18.0-553.el8_10.x86_64.rpm
+   yum localinstall kernel-modules-4.18.0-553.el8_10.x86_64.rpm
+   yum localinstall ./kernel-modules-extra-4.18.0-553.el8_10.x86_64.rpm
+   ```
+
+<br>
+
+#### 3️⃣ 커널 업데이트 진행
+- 설치 후 부팅 커널 설정 (grub에 새 커널 등록)
+   ```
+   sudo grubby --set-default /boot/vmlinuz-4.18.0-553.el8_10.x86_64
+   ```
+
+- 부팅 커널 확인
+  ```
+  grubby --default-kernel
+  ```
+
+   ![image](https://github.com/user-attachments/assets/9f34c5f0-7418-47ea-8fe5-75225456799f)
+
+<br>
+
+#### 4️⃣ 재부팅 후 확인!
+- 재부팅 전 커널
+
+  ![image](https://github.com/user-attachments/assets/5b7dbb5f-dd3a-4390-ab07-579d4a9cc1db)
+
+- 재부팅 후 커널
+
+  ![image](https://github.com/user-attachments/assets/37e132a7-5b23-4070-8bce-45f575abeb6e)
+
+<br>
+
+#### 5️⃣ 참고
+- `uname -r`로는 커널 업데이트된 것 확인 가능한데, `dnf list kernel`에는 이전 버전만 보이는 상황
+
+   ![image](https://github.com/user-attachments/assets/ae95bc61-6986-4b4c-ab73-d1da99a8bfae)
+
+- `dnf list kernel` 명령은 "kernel"이라는 메타 패키지의 설치 여부만 확인.
+- 하지만, 실제로 시스템에 설치되는 건 아래처럼 버전별로 나뉘어진 개별 패키지들임
+     
+    ![image](https://github.com/user-attachments/assets/eb0843bb-5929-4f80-8aff-01b7739074ff)
+
+- `kernel-core-4.18.0-553.el8_10` 버전은 수동으로 설치했지만, 커널 메타패키지는 업데이트되지 않았기 때문에 예전 버전만 보이는 것임.
+
+<br>
+
+> 🌟 메타패키지도 최신으로 맞추고 싶다면 `kernel-4.18.0-553.el8_10.x86_64.rpm`
+
+- client01
+   ```
+   wget https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/Packages/k/kernel-4.18.0-553.el8_10.x86_64.rpm
+   scp -r kernel-4.18.0-553.el8_10.x86_64.rpm 192.168.56.6:/localrepo/AppStream/Packages/k
+   ```
+
+- client02
+   ```
+   yum localinstall kernel-4.18.0-553.el8_10.x86_64.rpm
+   ```
+
+   ![image](https://github.com/user-attachments/assets/06826011-c427-449b-8488-bb757bab4854)
+
+---
+
+
+
+  
 
 
 
