@@ -39,7 +39,7 @@
 
 4. 마운트 해제
    ```
-   umount /dev/sr0
+   umount /mnt
    ```
 
 
