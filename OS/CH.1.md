@@ -43,9 +43,11 @@
    ```
 
 
-5. `/etc/yum.repos.d/Rocky-Media.repo` 파일 수정
+5. `/etc/yum.repos.d/local.repo` 파일 생성
 
-   ![image](https://github.com/user-attachments/assets/7a01a3c1-66d5-4a95-9501-aebb08f01b81)
+   ![image](https://github.com/user-attachments/assets/531c70f5-a69e-45be-9203-7a13efa11341)
+
+
 
 6. 설치 테스트
 
@@ -464,11 +466,32 @@ total 8
 #### 1️⃣ 설치된 커널 버전과 현재 최신 커널 버전 확인
 > <https://servermon.tistory.com/702> 링크 참고
 
-1. OS 버전 및 설치된 커널 버전 확인
+1. 커널 버전 확인 및 업데이트 버전 확인
+
+   - 커널/OS 버전 확인
    
-   ![image](https://github.com/user-attachments/assets/5264a2ce-f693-463a-ae34-9c62b8db479e)
+      ![image](https://github.com/user-attachments/assets/5264a2ce-f693-463a-ae34-9c62b8db479e)
+
+   - 업데이트 가능 버전 확인
+        ```
+        dnf list kernel
+        ```   
+
+       ![image](https://github.com/user-attachments/assets/9f89389f-c757-44a1-8ef4-2a995459d841)
+
+     - 공식 사이트에서 확인
+            
+       ![image](https://github.com/user-attachments/assets/42427615-21c7-4564-b763-49e3cee97c01)
 
 
+   2. 커널 업데이트
+      > OS 버전 업데이트는 다른 소프트웨어와의 호환성에 문제가 있을 수 있어 커널 업데이트만 진행
+
+      ```
+      dnf install kernel
+      ```
+
+      
 
 
 
