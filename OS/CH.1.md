@@ -24,7 +24,7 @@
    cp -ar AppStream/ BaseOS/ /localrepo/
    ```
 
-3. `createrepo` 설치를 위해 의존성 파일 먼저 설치 
+3. `createrepo` 설치 (의존성 파일 먼저 설치)
 
    ![image](https://github.com/user-attachments/assets/6b0db2ce-dd50-4725-bfd2-7ed680c388e1)
 
@@ -34,13 +34,10 @@
 
    - `libcreaterepo`, `createrepo` 설치
 
-       ![image](https://github.com/user-attachments/assets/0fde5829-044e-4723-9ccd-5e9de0b32a28)
+      ![image](https://github.com/user-attachments/assets/873070d4-8303-4b37-bf4b-66741e20b095)
 
 
 마운트해제
-
-
-
 
 
 
