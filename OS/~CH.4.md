@@ -604,16 +604,79 @@ total 8
    - 외부 누구나 질의 가능
    - DNSSEC 응답 검증 하지 않음
 
+   <br>
+   
    ```
    systemctl restart named
    systemctl enable named
    systemctl status named
    ```
 
+3. 네임서버 작동 테스트
+
+   ![image](https://github.com/user-attachments/assets/8e1256fc-d863-4889-adda-1c914e5e8c9a)
+
+   ```
+   nslookup
+   server [테스트할 네임서버 IP]    // 질의할 서버 지
+   조회할 URL
+   exit
+   ```
+
+#### 2️⃣`client02`에서 네임서버 설정 변경
+1. `client02`에서 `client01`에서 구축한 네임서버가 잘 가동하는지 확인
+   
+   ![image](https://github.com/user-attachments/assets/ae1fcdcf-04c4-4cd0-841a-3ae3b2230d7f)
+
+2. 위 네임서버를 고정적으로 사용하도록 지정
+   ```
+   vi /etc/resolv.conf
+   ```
+   
+     ![image](https://github.com/user-attachments/assets/7ce95544-4a5c-466a-8dee-a060583609b6)
+
+   - 폐쇄망으로 구성해서 `curl`은 사용x, `nslookup`으로 테스트
+
+     ![image](https://github.com/user-attachments/assets/88cff000-5670-4244-9523-77c4a50bdbf2)
+
+<br>
+
+### 마스터 네임 서버
+- 도메인에 속해 있는 컴퓨터의 이름 관리, URL을 가진 컴퓨터의 IP 주소를 알기 원할 때 컴퓨터의 IP 주소를 알려주는 네임서버
+- 자신이 별도로 관리하는 도메인이 있으며 외부에서 자신이 관리하는 컴퓨터의 ip 주소를 물어볼 때 자신의 DB에서 그 주소를 찾아 알려주는 네임서버
+
+### 💡실습
+> **`client01`에 ecore.com의 마스터 네임 서버를 설치하고 운영하자**
+
+#### 1️⃣ 웹서버 설치
+```
+yum install httpd
+```
+
+- `index.html` 파일 생성
+  
+   ![image](https://github.com/user-attachments/assets/2bf3c50e-99eb-4529-bed2-f7a4a2db5d5b)
+
+#### 2️⃣ FTP 서버 설치 및 설정
+```
+yum install -y vsftpd
+```
+
+- `/var/ftp/welcome.msg` 파일 생성
+
+     ![image](https://github.com/user-attachments/assets/91a1d582-083a-4e7f-94de-5da80d9c3461)
+
+- `/etc/vsftpd/vsftpd.conf` 파일 수정
+     - 외부에서 FTP Server에 접속했을 때 출력되는 문구
+
+     ![image](https://github.com/user-attachments/assets/dc2fd4a1-5af3-4c8b-b807-0c15f2232e49)
+
+- FTP 서버 재시작
+  ```
+  systemctl restart vsftpd
+  ```
 
 
 
 
-
-
-
+   
