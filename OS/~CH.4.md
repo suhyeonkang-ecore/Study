@@ -732,9 +732,34 @@ yum install -y vsftpd
 
 
 ## 번외 - x윈도우 설치 과정?
+- `client01`에서 `httpd` 활성화
+     ```
+     systemctl start httpd
+     systemctl enable httpd
+     ```
 
+- 테스트를 위해 `client02`에 xwindow 설치
+   ```
+   [root@client02 ~]# yum groupinstall "Server With GUI"
+   
+   [root@client02 ~]# systemctl set-default graphical.target
+   Removed /etc/systemd/system/default.target.
+   Created symlink /etc/systemd/system/default.target → /usr/lib/systemd/system/graphical.target.
+   [root@client02 ~]# systemctl enable gdm
+   [root@client02 ~]# systemctl start gdm
+   [root@client02 ~]# sudo yum install xorg-x11-drv-evdev xorg-x11-drv-libinput -y
 
+   [root@client02 ~]# reboot
 
+   [root@client02 ~]# firefox
+   // 창은 뜨는데 접속이 안 된다면 `client01`의 `httpd` 상태 확인
+   ```
+
+- 접속 테스트 성공
+  
+   ![image](https://github.com/user-attachments/assets/7cd44d57-56bb-4b96-a029-e21ea98f8b26)
+
+   
 
 
 
