@@ -726,19 +726,26 @@ yum install -y vsftpd
    |CNAME|호스트 이름에 별칭 부여할 때 사용|
 
 4. 적용
+   
    ```
    systemctl restart named
    ```
 
+<br>
 
-## 번외 - x윈도우 설치 과정?
+#### 4️⃣ `client02`에서 마스터 네임 서버가 제대로 작동하는지 확인
+> **🌟 1. x윈도우 설치 과정 + firefox 접속**
 - `client01`에서 `httpd` 활성화
+
      ```
      systemctl start httpd
      systemctl enable httpd
      ```
+     
+<br>
 
 - 테스트를 위해 `client02`에 xwindow 설치
+
    ```
    [root@client02 ~]# yum groupinstall "Server With GUI"
    
@@ -755,11 +762,17 @@ yum install -y vsftpd
    // 창은 뜨는데 접속이 안 된다면 `client01`의 `httpd` 상태 확인
    ```
 
-- 접속 테스트 성공
+<br>
+
+- firefox 접속 성공 (`client01`이 만든 `/var/www/html/welcom.html` 파일)
   
    ![image](https://github.com/user-attachments/assets/7cd44d57-56bb-4b96-a029-e21ea98f8b26)
 
-   
+<br>
+
+> **🌟 2.`client02`에서 `client03`의 FTP 서버 접속 테스트**
+  
+   ![image](https://github.com/user-attachments/assets/74c5dfbd-4975-476b-afa3-ad9e3553f212)
 
 
 
