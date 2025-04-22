@@ -10,9 +10,11 @@
 
 #### 1️⃣ `client01`에 네임서버 설치하고 관련 설정 진행
 1. 패키지 설치
+   
    ```
    yum install bind bind-chroot
    ```
+   
    - `bind`: **기본 BIND DNS 서버**
       - dns 서버 기능을 수행하는 기본 패키지
       - 설치 시, dns 서버 데몬인 `named`가 일반적인 시스템 경로에서 실행됨
@@ -24,7 +26,7 @@
 
       ![image](https://github.com/user-attachments/assets/490a7ad6-c08a-4640-b84c-d3f3ed705f6f)
 
-2. 캐싱 전용 네임 서버와 관련된 설정 파일인 `/etc/named.conf` 수정
+3. 캐싱 전용 네임 서버와 관련된 설정 파일인 `/etc/named.conf` 수정
 
    ![image](https://github.com/user-attachments/assets/284b3c63-5497-43ad-8d49-68cc9daf5cf9)
 
@@ -40,7 +42,7 @@
    systemctl status named
    ```
 
-3. 네임서버 작동 테스트
+4. 네임서버 작동 테스트
 
    ![image](https://github.com/user-attachments/assets/8e1256fc-d863-4889-adda-1c914e5e8c9a)
 
