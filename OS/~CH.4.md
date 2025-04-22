@@ -629,6 +629,14 @@ total 8
    ![image](https://github.com/user-attachments/assets/ae1fcdcf-04c4-4cd0-841a-3ae3b2230d7f)
 
 2. 위 네임서버를 고정적으로 사용하도록 지정
+   - `NetworkManager`를 사용할 경우 수동 변경한 `resolv.conf` 파일은 재부팅 후 초기화가 됨
+
+   ```
+   nmcli con mod enp0s9 ipv4.dns 192.168.56.5
+   nmcli con mod enp0s9 ipv4.ignore-auto-dns yes
+   nmcli con up enp0s9
+   ```
+   
    ```
    vi /etc/resolv.conf
    ```
