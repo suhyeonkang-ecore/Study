@@ -657,7 +657,9 @@ yum install httpd
   
    ![image](https://github.com/user-attachments/assets/2bf3c50e-99eb-4529-bed2-f7a4a2db5d5b)
 
-#### 2️⃣ FTP 서버 설치 및 설정
+<br>
+
+#### 2️⃣ FTP 서버 설치 및 설정 (`client03`에서 진행)
 ```
 yum install -y vsftpd
 ```
@@ -676,7 +678,59 @@ yum install -y vsftpd
   systemctl restart vsftpd
   ```
 
+<br>
+
+#### 3️⃣ ecore.com 도메인에 대한 설정 진행 (`client01`에서 진행)
+1. `/etc/named.conf` 파일 수정 (**가장 아래쪽**)
+    - 네임 서버 서비스가 시작될 때 제일 먼저 읽는 파일
+
+      ![image](https://github.com/user-attachments/assets/d3bb45dd-f7fc-4a0c-9e0e-6586466a40ec)
+
+      ![image](https://github.com/user-attachments/assets/07b31d11-aec9-4028-86bb-8165bc897998)
+
+      - type `hint` or `master` or `slave` : 마스터 네임 서버
+      - file `파일이름` : options의 directory에 생성될 `도메인 이름`의 상세 설정 파일
+      - `allow-update { IP주소 } or { none } : 2차 네임 서버 주소. 생략하면 none으로 처리
+<br>
+
+2. 문법 체크
+   - 아무 메시지도 나오지 않으면 정상
+   ```
+   named-checkconf
+   ```
+<br>
+
+3. `/var/named/ecore.com.db` 파일 생성
+   - 이 파일을 **정방향 영역 파일** 또는 **포워드 존파일**이라고 함
+
+   ![image](https://github.com/user-attachments/assets/6d4cd30b-6e34-4e0d-908f-c3eb0eb515e6)
+
+   | 문법 | 의미 |
+   |-----|--------|
+   |;(세미콜론)|주석|
+   |$TTL|www.ecore.com의 호스트 이름을 물었을 때 문의한 다른 네임서버가 해당 IP 주소를 캐시에 저장하는 시간|
+   |@|/etc/named.conf에 정의된 ecore.com을 의미 (ecore.com으로 작성해도 됨)|
+   |IN|클래스 이름으로 internet을 의미|
+   |SOA|권한의 시작을 의미|
+   |NS|name server, 설정된 도메인의 네임 서버 역할을 하는 컴퓨터 지정|
+   |MX|Mail Exchanger, 메일 서버 컴퓨터 설정하는 부분|
+   |A|호스트 이름에 상응하는 IP 주소 지정|
+   |CNAME|호스트 이름에 별칭 부여할 때 사용|
+
+4. 적용
+   ```
+   systemctl restart named
+   ```
 
 
 
-   
+
+
+
+
+
+
+
+
+
+
