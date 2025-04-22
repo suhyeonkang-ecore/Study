@@ -731,6 +731,8 @@ yum install -y vsftpd
    ```
 
 
+## 번외 - x윈도우 설치 과정?
+
 
 
 
