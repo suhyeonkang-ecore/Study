@@ -1,4 +1,4 @@
-## [507p] 네임 서버
+![image](https://github.com/user-attachments/assets/e386e413-faa2-4c2d-86c1-092bab52abd0)## [507p] 네임 서버
 ### 로컬네임서버 + 캐싱네임서버
   
 ![image](https://github.com/user-attachments/assets/ed81431e-425e-42e7-982a-47c64d9db506)
@@ -56,7 +56,7 @@
 <br>
 
 #### 2️⃣`client02`에서 네임서버 설정 변경
-1. `client02`에서 `client01`에서 구축한 네임서버가 잘 가동하는지 확인
+1. `client01`에서 구축한 네임서버가 잘 가동하는지 확인 (`client02`에서 진행)
    
    ![image](https://github.com/user-attachments/assets/ae1fcdcf-04c4-4cd0-841a-3ae3b2230d7f)
 
@@ -208,8 +208,40 @@ yum install -y vsftpd
   
    ![image](https://github.com/user-attachments/assets/74c5dfbd-4975-476b-afa3-ad9e3553f212)
 
+<br>
 
+---
 
+### ✅ 라운드 로빈 방식의 네임서버 구현
+
+1️⃣ **`client01`**에서 라운드 로빈 설정 진행
+- `nslookup` 명령을 입력해 실제 운영 중인 웹 서버의 IP 주소를 몇 개 확인
+
+    ![image](https://github.com/user-attachments/assets/9ea4dec1-8cdc-4c81-a12d-6a10f1becd82)
+
+    - 위 3개의 IP 주소를 www.ecore.com의 웹 서버 3대라고 가정
+
+- 라운드 로빈 설정
+  ```
+  vi /var/named/ecore.com.db
+  ```
+
+  ![image](https://github.com/user-attachments/assets/fe95e900-0ccb-49ba-9d3f-86f0f24bfdeb)
+
+    - 100/200/300은 단순히 차례를 나타내는 것. 다른 숫자를 사용해도 무관
+
+- 네임 서버 재시작
+  ```
+  systemctl restart named
+  ```
+
+- 라운드 로빈 테스트
+
+    ![image](https://github.com/user-attachments/assets/d80071c7-5de7-4489-8027-a6065b747dd2)
+
+<br>
+
+2️⃣ 외부 인터넷에 있는 컴퓨터(`client02`)로 라운드 로빈 작동 테스트
 
 - 라운드로빈 방식의 네임서버 구현
 - 메일 서버 구성
