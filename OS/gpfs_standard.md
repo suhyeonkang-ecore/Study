@@ -86,6 +86,7 @@ known_hosts                                                                     
 
 <br>
 
+## gpfs 파일 압축 해제
 ```
 ### gpfs 파일 압축 해제 ###
 [root@gpfs01 ~]# ls
