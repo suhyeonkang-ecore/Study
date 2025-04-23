@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e386e413-faa2-4c2d-86c1-092bab52abd0)## [507p] 네임 서버
+## [507p] 네임 서버
 ### 로컬네임서버 + 캐싱네임서버
   
 ![image](https://github.com/user-attachments/assets/ed81431e-425e-42e7-982a-47c64d9db506)
@@ -242,6 +242,26 @@ yum install -y vsftpd
 <br>
 
 2️⃣ 외부 인터넷에 있는 컴퓨터(`client02`)로 라운드 로빈 작동 테스트
+- **문법 확인** : `named-checkzone ecore2.com ecore2.com.db`
+
+    ![image](https://github.com/user-attachments/assets/9fd6ab61-3de6-4025-a24e-bc162ae5b611)
+    - 11, 12행에 값이 정의되어 있지만 TTL 100(첫줄)의 값을 상속한다고 되어 있음
+
+- 파일을 수정하지 않고 firefox로 접속해보았을 때 TTL이 200으로 지정된 `101.79.10.138` 사이트만 접속되는 상황
+  - 세 IP 중 하나의 사이트만 뜸 + 위에서 TTL(100)을 상속받았다고 했는데 TTL(200) 값의 사이트만 접속됨
+
+  ![image](https://github.com/user-attachments/assets/209f82a9-184c-4892-8f13-90e53fb1c363)
+
+
+
+
+
+
+
+
+
+
+
 
 - 라운드로빈 방식의 네임서버 구현
 - 메일 서버 구성
