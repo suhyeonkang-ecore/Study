@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/87b0678a-948f-495d-b96b-25f4efcbf20b)![image](https://github.com/user-attachments/assets/cdbc0941-a1a0-4ec1-a44e-70a73c2c0dc8)![image](https://github.com/user-attachments/assets/73ae4fd0-e273-4705-bd83-ca36f516c020)![image](https://github.com/user-attachments/assets/cb5e457b-fabc-4e43-9d5a-f9ecb37386e3)## ssh-keygen
+## ssh-keygen
 ```
 [root@gpfs01 ~]# ssh-keygen -t rsa
 Generating public/private rsa key pair.
