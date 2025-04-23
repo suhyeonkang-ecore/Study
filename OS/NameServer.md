@@ -244,14 +244,95 @@ yum install -y vsftpd
 2️⃣ 외부 인터넷에 있는 컴퓨터(`client02`)로 라운드 로빈 작동 테스트
 - **문법 확인** : `named-checkzone ecore2.com ecore2.com.db`
 
-    ![image](https://github.com/user-attachments/assets/9fd6ab61-3de6-4025-a24e-bc162ae5b611)
+     ![image](https://github.com/user-attachments/assets/27283e23-c965-4fd5-910e-5ffcd87dcbe1)
+
     - 11, 12행에 값이 정의되어 있지만 TTL 100(첫줄)의 값을 상속한다고 되어 있음
 
-- 파일을 수정하지 않고 firefox로 접속해보았을 때 TTL이 200으로 지정된 `101.79.10.138` 사이트만 접속되는 상황
-  - 세 IP 중 하나의 사이트만 뜸 + 위에서 TTL(100)을 상속받았다고 했는데 TTL(200) 값의 사이트만 접속됨
+<br>
+
+### 💡 파일을 수정하지 않고 firefox로 접속해보았을 때 TTL이 200으로 지정된 `101.79.10.138` 사이트만 접속되는 상황
+- 세 IP 중 하나의 사이트만 뜸 + 위에서 TTL(100)을 상속받았다고 했는데 TTL(200) 값의 사이트만 접속됨
 
   ![image](https://github.com/user-attachments/assets/209f82a9-184c-4892-8f13-90e53fb1c363)
 
+#### ⚒️ 문제 원인
+  - `curl`을 이용해 확인해보기
+    ```
+    curl -I http://120.50.131.112
+    curl -I http://101.79.10.138
+    curl -I http://203.252.226.20
+    ```
+    
+     ![image](https://github.com/user-attachments/assets/b1416b43-9e5c-4252-b1b0-eec5a11c8d57)
+
+      ✅ `120.50.131.112`
+    - 접속은 되지만, GET 대신 HEAD 요청을 거부하거나, 특정 메서드만 허용한 상태
+    - 실제 콘텐츠를 보여주지 않음
+
+    ✅ `101.79.10.138`
+    - 정상. 응답가능
+    - 실제 웹사이트의 INDEX 페이지 반환
+
+    ✅ `203.252.226.20`
+    - 리디렉션 응답(302)
+    - curl에선 리디렉션을 따라가지 않지만, 브라우저에서는 잘 작동?
+
+<br>
+
+#### 😎 해결 방안 : nginx를 통해 랜덤 리디렉션
+1. nginx 설치
+   ```
+   yum install -y nginx
+
+   systemctl stop httpd
+   systemctl disable httpd (nginx와 포트 번호 충돌)
+
+   systemctl start nginx
+   systemctl enable nginx
+   ```
+
+2. nginx 설정 파일 생성
+   ```
+   server {
+    listen 80;
+    server_name www.ecore2.com;
+
+    location / {
+        set $target "";
+
+        # 랜덤 숫자 생성 (0, 1, 2 중 하나)
+        set $random $request_id;
+        if ($random ~* "^(.)(.)") {
+            set $target $1;
+        }
+
+        # 랜덤 리디렉션 처리
+        if ($target = "0") {
+            return 302 https://www.cju.ac.kr;
+        }
+        if ($target = "1") {
+            return 302 https://www.hanbit.co.kr;
+        }
+        if ($target = "2") {
+            return 302 https://www.nate.com;
+        }
+
+        # 기본 리디렉션 (설정이 잘못됐을 때)
+        return 302 https://www.naver.com;
+        }
+    }
+    ```
+
+    ![image](https://github.com/user-attachments/assets/cc9a08a8-650b-4ac6-8609-a370a21ddb8f)
+
+   
+<br>
+
+3. firefox에서 접속 테스트
+  
+    ![image](https://github.com/user-attachments/assets/4e9be5ed-18d3-48f0-af95-c151c9406e4e)
+
+    
 
 
 
