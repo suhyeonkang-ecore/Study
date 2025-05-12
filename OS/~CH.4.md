@@ -195,23 +195,26 @@ total 8
    
 2. `/etc/crontab` 파일 수정
 
-   ![Image](https://github.com/user-attachments/assets/fc4d9658-d23a-4a16-a1aa-19053cc9bc1b)
+   ![image](https://github.com/user-attachments/assets/2994cc70-f93d-4fe1-800d-9757cff5a255)
+
 
 3. `/etc/cron.monthly` 파일 수정
    
    ![Image](https://github.com/user-attachments/assets/506795cc-3c93-4cad-977c-8b4268fa0879)
+
+   - /home 디렉토리를 압축해서 /backup 디렉토리에 저장하는 백업 스크립트
       
-4. `/backup` 디렉터리 생성
+5. `/backup` 디렉터리 생성
       ```
       mkdir /backup
       ```
       
-5. `crond` 서비스 재시작
+6. `crond` 서비스 재시작
       ```
       systemctl restart crond
       ```
       
-6. 날짜 변경 후 테스트
+7. 날짜 변경 후 테스트
 
    ![Image](https://github.com/user-attachments/assets/317361ce-2d8e-42b5-a532-80e912f4c2a5)
 
