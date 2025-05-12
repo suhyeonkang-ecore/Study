@@ -32,7 +32,10 @@
 
    - ipv4용 53번 포트 수신 허용 / ipv6 비활성화
    - 외부 누구나 질의 가능
-   - DNSSEC 응답 검증 하지 않음
+   - `DNSSEC` 응답 검증 하지 않음
+     - Domain Name System Security Extensions: DNS의 위변조 방지 및 무결성 검증을 위한 보안 확장 기능
+
+      ![image](https://github.com/user-attachments/assets/dc256ad9-665a-4f62-ae4a-5cbbca1fec8b)
 
    <br>
    
