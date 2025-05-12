@@ -56,7 +56,9 @@
 systemctl restart named
 ```
 
-3️⃣ 간단한 html 파일 생성
+<br>
+
+### 3️⃣ 간단한 html 파일 생성
 ```
 cd /var/www/html/
 
@@ -70,9 +72,115 @@ cat index.html
 
  ![web11](./image/web.png)
 
- 
+<br>
+
+---
+
+<br>
+
+## 나만의 사이트 생성하기
+
+💡 [레포지토리](https://github.com/suhyeonkang-ecore/suhyeonkang-ecore.github.io) 내의 파일 참고
+
+```
+[root@localhost ~]# tree
+.
+├── rhel-8.9-x86_64-dvd.iso
+└── suhyeonkang-ecore.github.io
+    ├── index.html
+    └── startbootstrap-freelancer-gh-pages
+        ├── css
+        │   ├── freelancer.css
+        │   └── freelancer.min.css
+        ├── gulpfile.js
+        ├── img
+        │   ├── portfolio
+        │   │   ├── cabin.png
+        │   │   ├── cake.png
+        │   │   ├── circus.png
+        │   │   ├── game.png
+        │   │   ├── safe.png
+        │   │   └── submarine.png
+        │   ├── profile2.png
+        │   └── profile.png
+        ├── index.html
+        ├── js
+        │   ├── contact_me.js
+        │   ├── freelancer.js
+        │   ├── freelancer.min.js
+        │   └── jqBootstrapValidation.js
+        ├── less
+        │   ├── freelancer.less
+        │   ├── mixins.less
+        │   └── variables.less
+        ├── LICENSE
+        ├── mail
+        │   └── contact_me.php
+        ├── package.json
+        ├── README.md
+        └── vendor
+            ├── bootstrap
+            │   ├── css
+            │   │   ├── bootstrap.css
+            │   │   └── bootstrap.min.css
+            │   ├── fonts
+            │   │   ├── glyphicons-halflings-regular.eot
+            │   │   ├── glyphicons-halflings-regular.svg
+            │   │   ├── glyphicons-halflings-regular.ttf
+            │   │   ├── glyphicons-halflings-regular.woff
+            │   │   └── glyphicons-halflings-regular.woff2
+            │   └── js
+            │       ├── bootstrap.js
+            │       └── bootstrap.min.js
+            ├── font-awesome
+            │   ├── css
+            │   │   ├── font-awesome.css
+            │   │   └── font-awesome.min.css
+            │   ├── fonts
+            │   │   ├── FontAwesome.otf
+            │   │   ├── fontawesome-webfont.eot
+            │   │   ├── fontawesome-webfont.svg
+            │   │   ├── fontawesome-webfont.ttf
+            │   │   ├── fontawesome-webfont.woff
+            │   │   └── fontawesome-webfont.woff2
+            │   ├── less
+            │   │   ├── animated.less
+            │   │   ├── bordered-pulled.less
+            │   │   ├── core.less
+            │   │   ├── fixed-width.less
+            │   │   ├── font-awesome.less
+            │   │   ├── icons.less
+            │   │   ├── larger.less
+            │   │   ├── list.less
+            │   │   ├── mixins.less
+            │   │   ├── path.less
+            │   │   ├── rotated-flipped.less
+            │   │   ├── screen-reader.less
+            │   │   ├── stacked.less
+            │   │   └── variables.less
+            │   └── scss
+            │       ├── _animated.scss
+            │       ├── _bordered-pulled.scss
+            │       ├── _core.scss
+            │       ├── _fixed-width.scss
+            │       ├── font-awesome.scss
+            │       ├── _icons.scss
+            │       ├── _larger.scss
+            │       ├── _list.scss
+            │       ├── _mixins.scss
+            │       ├── _path.scss
+            │       ├── _rotated-flipped.scss
+            │       ├── _screen-reader.scss
+            │       ├── _stacked.scss
+            │       └── _variables.scss
+            └── jquery
+                ├── jquery.js
+                └── jquery.min.js
+```
+
+
+![html](./image/html.png)
+
+- `index.html` 파일은 필요 부분만 수정하였음
 
   
-4️⃣
-
-5️⃣
