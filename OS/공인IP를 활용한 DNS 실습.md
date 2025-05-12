@@ -5,7 +5,7 @@
 
 <br>
 
-1️⃣ 네임서버 설치 및 관련 설정 진행
+### 1️⃣ 네임서버 설치 및 관련 설정 진행
 1. 패키지 설치
    ```
    yum install bind bind-utils
@@ -34,7 +34,24 @@
    ![image](https://github.com/user-attachments/assets/dd9daa48-02ba-430b-b19f-9b5f5f0c3542)
 
 
-2️⃣
+### 2️⃣ 마스터 네임서버 설정 및 운영
+1. 서비스 설치
+   
+```
+yum install httpd
+```
+
+2. `/etc/named.conf` 파일 수정
+
+![image](https://github.com/user-attachments/assets/1d0626a6-c798-4863-9f8c-205ad143819d)
+
+- 현재 실습 시에는 `forwarders` 부분이 불필요하여 작성하지 않음
+
+```
+named-checkconf
+```
+
+3. 
 
 3️⃣
 
