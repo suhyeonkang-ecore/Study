@@ -12,7 +12,7 @@
 1. 패키지 설치
    
    ```
-   yum install bind bind-chroot
+   yum install bind bind-chroot bind-utils
    ```
    
    - `bind`: **기본 BIND DNS 서버**
