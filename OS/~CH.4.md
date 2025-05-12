@@ -11,7 +11,7 @@
 
 <br>
 
-# ⚒️ 로컬 레포 구성
+# ⚒️ 로컬 레포 구성(1)
 1. iso 파일 삽입
    ```
    mount -o loop /dev/sr0 /mnt
@@ -39,6 +39,46 @@
 5. 설치 테스트
 
    ![image](https://github.com/user-attachments/assets/df2688c4-61dd-4c09-93eb-46febbff05d6)
+
+<br>
+
+---
+# ⚒️ 로컬 레포 구성(2)
+1. 드래그 앤 드롭으로 iso 파일 삽입 (위치: /root/)
+   
+   ![image](https://github.com/user-attachments/assets/391b96e9-6e10-4c71-beab-c5341d71c25c)
+
+
+2. 마운트
+
+   ```
+   mount -o loop /root/rhel-8.9-x86_64-dvd.iso /mnt/iso
+   ```
+
+   ```
+   yum clean all
+   yum makecache
+   yum repolist
+   ```
+
+
+3. 자동 마운트 설정
+   ```
+   vi /etc/fstab
+
+   /root/rhel-8.9-x86_64-dvd.iso /mnt/iso iso9660 loop,ro,nofail 0 0
+   ```
+
+   ![image](https://github.com/user-attachments/assets/7c622000-216c-40b6-b4fc-3d6305571924)
+
+
+4. 테스트
+
+   ![image](https://github.com/user-attachments/assets/500adbf7-f584-45a2-a0e3-a08614500783)
+
+<br>
+
+---
 
 <br>
 
