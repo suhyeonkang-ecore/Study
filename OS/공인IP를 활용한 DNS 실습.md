@@ -43,7 +43,10 @@ yum install httpd
 
 2. `/etc/named.conf` 파일 수정
 
-![image](https://github.com/user-attachments/assets/1d0626a6-c798-4863-9f8c-205ad143819d)
+![conf파일1](./image/named.conf-`.png)
+
+![conf2](./image/named.conf-2.png)
+
 
 - 현재 실습 시에는 `forwarders` 부분이 불필요하여 작성하지 않음
 
