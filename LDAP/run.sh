@@ -21,6 +21,8 @@ LOCAL_GROUP="/etc/group"
 LOCAL_SHADOW="/etc/shadow"
 LOCAL_GSHADOW="/etc/gshadow"
 
+TARGET_GROUPS=("engineer" "developer" "sales")
+
 LOGFILE="./log/ldap_sync_$(date +%Y%m%d_%H%M%S).log"
 TMP_DIR="./tmp_ldap_sync"
 mkdir -p "$TMP_DIR" ./log
@@ -61,45 +63,7 @@ backup_and_append_if_changed() {
   fi
 }
 
-replace_group_entries_by_name() {
-  local file=$1
-  local tmp_input="$2"
-  local backup="${file}.$(date +%Y%m%d%H%M%S).bak"
-
-  cp "$file" "$backup"
-  log "백업 생성됨: $backup"
-
-  # map of groupname → line (from tmp_input)
-  declare -A new_entries
-  while IFS= read -r line; do
-    groupname=$(echo "$line" | cut -d: -f1)
-    new_entries["$groupname"]="$line"
-  done < "$tmp_input"
-
-  # 새 출력 파일
-  local tmp_merged="${file}.merged.tmp"
-  : > "$tmp_merged"
-
-  # 기존 파일 순회하면서 동일한 그룹이 있으면 교체
-  while IFS= read -r line; do
-    groupname=$(echo "$line" | cut -d: -f1)
-    if [[ -n "${new_entries[$groupname]+_}" ]]; then
-      echo "${new_entries[$groupname]}" >> "$tmp_merged"
-      unset new_entries["$groupname"]
-    else
-      echo "$line" >> "$tmp_merged"
-    fi
-  done < "$file"
-
-  # tmp_input에만 있는 그룹들 이어쓰기
-  for line in "${new_entries[@]}"; do
-    echo "$line" >> "$tmp_merged"
-  done
-
-  mv "$tmp_merged" "$file"
-  log "그룹/그섀도우 교체 반영됨: $file"
-}
-
+# ======== UID 기준 passwd 교체 ========
 replace_passwd_entries_by_uid() {
   local file=$1
   local tmp_input="$2"
@@ -108,7 +72,6 @@ replace_passwd_entries_by_uid() {
   cp "$file" "$backup"
   log "백업 생성됨: $backup"
 
-  # map of uid → line (from tmp_input)
   declare -A new_entries
   while IFS=: read -r line; do
     uid=$(echo "$line" | cut -d: -f3)
@@ -137,6 +100,7 @@ replace_passwd_entries_by_uid() {
   log "passwd 파일 교체 반영됨: $file"
 }
 
+# ======== UID 기준 shadow 교체 ========
 replace_shadow_entries_by_uid() {
   local file=$1
   local tmp_input="$2"
@@ -145,7 +109,6 @@ replace_shadow_entries_by_uid() {
   cp "$file" "$backup"
   log "백업 생성됨: $backup"
 
-  # map of uid → line (from tmp_input)
   declare -A new_entries
   while IFS=: read -r line; do
     uid=$(echo "$line" | cut -d: -f1)
@@ -174,7 +137,90 @@ replace_shadow_entries_by_uid() {
   log "shadow 파일 교체 반영됨: $file"
 }
 
-# ======== 1단계: 필수 그룹 생성 (engineer 등) ========
+# ======== 중복 멤버 제거하며 그룹/gshadow 병합 ========
+merge_group_entries_by_name_with_memberUid() {
+  local file=$1
+  local tmp_input="$2"
+  local backup="${file}.$(date +%Y%m%d%H%M%S).bak"
+
+  cp "$file" "$backup"
+  log "백업 생성됨: $backup"
+
+  declare -A ldap_entries
+  declare -A ldap_members_map
+
+  # LDAP 그룹 데이터 읽기
+  while IFS= read -r line; do
+    groupname=$(echo "$line" | cut -d: -f1)
+    ldap_entries["$groupname"]="$line"
+
+    local members=$(echo "$line" | cut -d: -f4-)
+    IFS=',' read -ra mem_array <<< "$members"
+    declare -A unique_members=()
+    for m in "${mem_array[@]}"; do
+      m_trimmed=$(echo "$m" | xargs)
+      [[ -n "$m_trimmed" ]] && unique_members["$m_trimmed"]=1
+    done
+
+    local unique_list=$(printf "%s," "${!unique_members[@]}")
+    unique_list=${unique_list%,}
+    ldap_members_map["$groupname"]="$unique_list"
+  done < "$tmp_input"
+
+  local tmp_merged="${file}.merged.tmp"
+  : > "$tmp_merged"
+
+  # 로컬 파일 읽기 및 LDAP 멤버 병합
+  while IFS= read -r line; do
+    groupname=$(echo "$line" | cut -d: -f1)
+    if [[ -n "${ldap_entries[$groupname]+_}" ]]; then
+      local local_members=$(echo "$line" | cut -d: -f4-)
+      IFS=',' read -ra local_mem_array <<< "$local_members"
+      declare -A local_unique=()
+      for lm in "${local_mem_array[@]}"; do
+        lm_trimmed=$(echo "$lm" | xargs)
+        [[ -n "$lm_trimmed" ]] && local_unique["$lm_trimmed"]=1
+      done
+
+      IFS=',' read -ra ldap_mem_array <<< "${ldap_members_map[$groupname]}"
+      for lm in "${ldap_mem_array[@]}"; do
+        lm_trimmed=$(echo "$lm" | xargs)
+        [[ -n "$lm_trimmed" ]] && local_unique["$lm_trimmed"]=1
+      done
+
+      local all_members=()
+      for key in "${!local_unique[@]}"; do
+        all_members+=("$key")
+      done
+
+      IFS=$'\n' sorted_members=($(sort <<<"${all_members[*]}"))
+      unset IFS
+
+      local members_field=$(IFS=','; echo "${sorted_members[*]}")
+
+      local f1=$(echo "$line" | cut -d: -f1)
+      local f2=$(echo "$line" | cut -d: -f2)
+      local f3=$(echo "$line" | cut -d: -f3)
+
+      echo "${f1}:${f2}:${f3}:$members_field" >> "$tmp_merged"
+
+      unset ldap_entries["$groupname"]
+      unset ldap_members_map["$groupname"]
+    else
+      echo "$line" >> "$tmp_merged"
+    fi
+  done < "$file"
+
+  # LDAP에만 있는 그룹 추가
+  for groupname in "${!ldap_entries[@]}"; do
+    echo "${ldap_entries[$groupname]}" >> "$tmp_merged"
+  done
+
+  mv "$tmp_merged" "$file"
+  log "그룹/그섀도우 병합 및 중복 멤버 제거 적용됨: $file"
+}
+
+# ======== 1단계: 필수 그룹 생성 ========
 create_required_groups() {
   log "▶ 1단계: 필수 그룹 생성 시작"
   gid_base=5000
@@ -191,7 +237,7 @@ create_required_groups() {
   log "▶ 1단계 완료"
 }
 
-# ======== 2-1단계: 로컬 그룹을 LDAP에 등록 및 memberUid 동기화 ========
+# ======== 2-1단계: 로컬 그룹 → LDAP 동기화 ========
 sync_groups_to_ldap() {
   log "▶ 2-1단계: 로컬 그룹 → LDAP 동기화 시작"
 
@@ -199,17 +245,6 @@ sync_groups_to_ldap() {
   : > "$ldif"
 
   while IFS=: read -r groupname _ gid members; do
-    # gid가 5000 이상인지 확인
-    if (( gid < 5000 )); then
-      continue
-    fi
-
-    # LDAP DN에 부적합한 문자가 있는 그룹 제외 (#, 공백 등)
-    if [[ "$groupname" =~ [^a-zA-Z0-9._-] ]]; then
-      log "⚠️ LDAP DN에 부적합한 그룹명 제외: $groupname"
-      continue
-    fi
-
     if ! ldapsearch -x -LLL -H "$LDAP_HOST" -D "$LDAP_ADMIN_DN" -w "$LDAP_PASS" \
         -b "$OU_GROUPS,$BASE_DN" "(cn=$groupname)" cn >/dev/null 2>&1; then
       cat >> "$ldif" <<EOF
@@ -223,59 +258,17 @@ EOF
         [[ -n "$m" ]] && echo "memberUid: $m" >> "$ldif"
       done
       echo "" >> "$ldif"
-      log "➕ LDAP 신규 그룹 추가 대상: $groupname (GID=$gid)"
     fi
   done < "$LOCAL_GROUP"
 
   if [[ -s "$ldif" ]]; then
     ldapadd -x -H "$LDAP_HOST" -D "$LDAP_ADMIN_DN" -w "$LDAP_PASS" -f "$ldif" | tee -a "$LOGFILE"
-  else
-    log "▶ 2-1단계: 신규 LDAP 그룹 없음"
   fi
 
   log "▶ 2-1단계 완료"
 }
 
-sync_group_members_to_ldap() {
-  log "▶ 보조 그룹 memberUid 동기화 시작"
-
-  while IFS=: read -r groupname _ gid members; do
-    if (( gid < 5000 )); then
-      continue
-    fi
-
-    # memberUid 수정 LDIF 파일 생성
-    local ldif="$TMP_DIR/${groupname}_modify.ldif"
-    : > "$ldif"
-
-    cat >> "$ldif" <<EOF
-dn: cn=$groupname,$OU_GROUPS,$BASE_DN
-changetype: modify
-replace: memberUid
-EOF
-
-    # 멤버가 없으면 빈 값 처리 필요
-    if [[ -n "$members" ]]; then
-      IFS=',' read -ra memarr <<< "$members"
-      for mem in "${memarr[@]}"; do
-        echo "memberUid: $mem" >> "$ldif"
-      done
-    else
-      # memberUid 속성 삭제 필요할 때는 아래처럼
-      # echo "delete: memberUid" >> "$ldif"
-      :
-    fi
-
-    # ldapmodify 실행
-    ldapmodify -x -H "$LDAP_HOST" -D "$LDAP_ADMIN_DN" -w "$LDAP_PASS" -f "$ldif"
-    log "LDAP 그룹 memberUid 수정: $groupname"
-  done < "$LOCAL_GROUP"
-
-  log "▶ 보조 그룹 memberUid 동기화 완료"
-}
-
-
-# ======== 2-2단계: 로컬 GID 5000 이상 그룹 LDAP 동기화 (gidNumber 기준 신규 등록) ========
+# ======== 2-2단계: 로컬 GID 5000 이상 그룹 LDAP 동기화 ========
 sync_local_large_gid_groups_to_ldap() {
   log "▶ 2-2단계: 로컬 GID 5000 이상 그룹 → LDAP 신규 동기화 시작"
 
@@ -396,7 +389,7 @@ EOF
   fi
 }
 
-# ======== 4단계: LDAP 사용자들의 기본 그룹 누락 여부 점검 및 자동 생성 ========
+# ======== 4단계: LDAP 사용자 기본 그룹 누락 여부 점검 및 자동 생성 ========
 create_missing_primary_groups() {
   log "▶ 4단계: LDAP 사용자 기본 그룹 확인 및 누락 생성"
 
@@ -431,7 +424,7 @@ EOF
   fi
 }
 
-# ======== 5단계: LDAP → 로컬 이어쓰기 (중복 방지, 전체 교체) ========
+# ======== 5단계: LDAP → 로컬 이어쓰기 (중복 방지, 병합) ========
 sync_ldap_to_local() {
   log "▶ 5단계: LDAP 사용자/그룹 → 로컬 이어쓰기 시작"
 
@@ -465,7 +458,7 @@ sync_ldap_to_local() {
     /^shadowMax:/ {c=$2}
     /^shadowWarning:/ {d=$2}
     /^$/ {
-      print u ":" p ":" a ":" b ":" c ":" d ":::"
+      print u ":" p ":" a ":" b ":" c ":" d ":::" 
     }' > "$tmp_shadow"
 
   # /etc/group
@@ -497,8 +490,8 @@ sync_ldap_to_local() {
 
   replace_passwd_entries_by_uid "$LOCAL_PASSWD" "$tmp_passwd"
   replace_shadow_entries_by_uid "$LOCAL_SHADOW" "$tmp_shadow"
-  replace_group_entries_by_name "$LOCAL_GROUP" "$tmp_group"
-  replace_group_entries_by_name "$LOCAL_GSHADOW" "$tmp_gshadow"
+  merge_group_entries_by_name_with_memberUid "$LOCAL_GROUP" "$tmp_group"
+  merge_group_entries_by_name_with_memberUid "$LOCAL_GSHADOW" "$tmp_gshadow"
 
   log "▶ 5단계 완료: 로컬 이어쓰기 및 중복 제거"
 }
@@ -513,7 +506,6 @@ main() {
 
   sync_groups_to_ldap
   sync_local_large_gid_groups_to_ldap
-  sync_group_members_to_ldap      # << 추가
 
   sync_users_to_ldap
   create_missing_primary_groups
