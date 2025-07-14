@@ -21,8 +21,6 @@ LOCAL_GROUP="/etc/group"
 LOCAL_SHADOW="/etc/shadow"
 LOCAL_GSHADOW="/etc/gshadow"
 
-TARGET_GROUPS=("engineer" "developer" "sales")
-
 LOGFILE="./log/ldap_sync_$(date +%Y%m%d_%H%M%S).log"
 TMP_DIR="./tmp_ldap_sync"
 mkdir -p "$TMP_DIR" ./log
@@ -201,6 +199,17 @@ sync_groups_to_ldap() {
   : > "$ldif"
 
   while IFS=: read -r groupname _ gid members; do
+    # gid가 5000 이상인지 확인
+    if (( gid < 5000 )); then
+      continue
+    fi
+
+    # LDAP DN에 부적합한 문자가 있는 그룹 제외 (#, 공백 등)
+    if [[ "$groupname" =~ [^a-zA-Z0-9._-] ]]; then
+      log "⚠️ LDAP DN에 부적합한 그룹명 제외: $groupname"
+      continue
+    fi
+
     if ! ldapsearch -x -LLL -H "$LDAP_HOST" -D "$LDAP_ADMIN_DN" -w "$LDAP_PASS" \
         -b "$OU_GROUPS,$BASE_DN" "(cn=$groupname)" cn >/dev/null 2>&1; then
       cat >> "$ldif" <<EOF
@@ -214,15 +223,57 @@ EOF
         [[ -n "$m" ]] && echo "memberUid: $m" >> "$ldif"
       done
       echo "" >> "$ldif"
+      log "➕ LDAP 신규 그룹 추가 대상: $groupname (GID=$gid)"
     fi
   done < "$LOCAL_GROUP"
 
   if [[ -s "$ldif" ]]; then
     ldapadd -x -H "$LDAP_HOST" -D "$LDAP_ADMIN_DN" -w "$LDAP_PASS" -f "$ldif" | tee -a "$LOGFILE"
+  else
+    log "▶ 2-1단계: 신규 LDAP 그룹 없음"
   fi
 
   log "▶ 2-1단계 완료"
 }
+
+sync_group_members_to_ldap() {
+  log "▶ 보조 그룹 memberUid 동기화 시작"
+
+  while IFS=: read -r groupname _ gid members; do
+    if (( gid < 5000 )); then
+      continue
+    fi
+
+    # memberUid 수정 LDIF 파일 생성
+    local ldif="$TMP_DIR/${groupname}_modify.ldif"
+    : > "$ldif"
+
+    cat >> "$ldif" <<EOF
+dn: cn=$groupname,$OU_GROUPS,$BASE_DN
+changetype: modify
+replace: memberUid
+EOF
+
+    # 멤버가 없으면 빈 값 처리 필요
+    if [[ -n "$members" ]]; then
+      IFS=',' read -ra memarr <<< "$members"
+      for mem in "${memarr[@]}"; do
+        echo "memberUid: $mem" >> "$ldif"
+      done
+    else
+      # memberUid 속성 삭제 필요할 때는 아래처럼
+      # echo "delete: memberUid" >> "$ldif"
+      :
+    fi
+
+    # ldapmodify 실행
+    ldapmodify -x -H "$LDAP_HOST" -D "$LDAP_ADMIN_DN" -w "$LDAP_PASS" -f "$ldif"
+    log "LDAP 그룹 memberUid 수정: $groupname"
+  done < "$LOCAL_GROUP"
+
+  log "▶ 보조 그룹 memberUid 동기화 완료"
+}
+
 
 # ======== 2-2단계: 로컬 GID 5000 이상 그룹 LDAP 동기화 (gidNumber 기준 신규 등록) ========
 sync_local_large_gid_groups_to_ldap() {
@@ -414,7 +465,7 @@ sync_ldap_to_local() {
     /^shadowMax:/ {c=$2}
     /^shadowWarning:/ {d=$2}
     /^$/ {
-      print u ":" p ":" a ":" b ":" c ":" d ":::" 
+      print u ":" p ":" a ":" b ":" c ":" d ":::"
     }' > "$tmp_shadow"
 
   # /etc/group
@@ -462,6 +513,7 @@ main() {
 
   sync_groups_to_ldap
   sync_local_large_gid_groups_to_ldap
+  sync_group_members_to_ldap      # << 추가
 
   sync_users_to_ldap
   create_missing_primary_groups
