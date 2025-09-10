@@ -18,9 +18,9 @@ fi
 
 TODAY=$(date +%Y%m%d)
 
-mkdir -p "$TMP_DIR" "$LOG_DIR"
 LOG_DIR="./log"
 TMP_DIR="./tmp_ldap_sync"
+mkdir -p "$TMP_DIR" "$LOG_DIR"
 
 LOGFILE="$LOG_DIR/ldap_sync_$(date +%Y%m%d_%H%M%S).log"
 
@@ -30,5 +30,5 @@ log() {
 }
 
 # =========최초 백업=========
-mkdir -p /etc/ldap_backup/${TODAY}-org
+mkdir -p /home/ecore/ldap_backup/${TODAY}-org
 cp -arp /etc/passwd /etc/shadow /etc/group /etc/gshadow /home/ecore/ldap_backup/${TODAY}-org
